@@ -81,7 +81,7 @@ const PROJECTS = [
       "Optimised for local Google searches",
     ],
     stack: ["Next.js", "TypeScript"],
-    desktop: "/projects/finfastspace-desktop.png",
+    desktop: "/finfastspace-desktop.png",
     mobile: "/projects/finfastspace-mobile.png",
     cta: "Open the live site",
     bg: "var(--card-a)",
@@ -100,7 +100,7 @@ const PROJECTS = [
       "Smooth on phone, tablet and desktop",
     ],
     stack: ["React", "TypeScript"],
-    desktop: "/projects/mindmetrics-desktop.png",
+    desktop: "/public/mindmetrics-desktop.png",
     mobile: "/projects/mindmetrics-mobile.png",
     cta: "Try it live",
     bg: "var(--card-b)",
@@ -690,7 +690,7 @@ export default function Portfolio() {
             </a>
           </motion.div>
           <p className="pf-copy">
-            © {new Date().getFullYear()} Jainy Pasnani &amp; Mehak Arora. Made with care, caffeine and a lot of tabs.
+            © 2026 Jainy Pasnani &amp; Mehak Arora. Made with care, caffeine and a lot of tabs.
           </p>
         </section>
       </div>
