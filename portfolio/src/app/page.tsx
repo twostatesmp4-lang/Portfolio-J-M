@@ -3,11 +3,9 @@
 import { motion, useReducedMotion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 
-/* ------------------------------------------------------------------ */
-/*  EDIT ME: all the content lives here                                */
-/* ------------------------------------------------------------------ */
 
-const EMAIL = "hello@yourdomain.com"; // TODO: swap for your real email
+
+const EMAIL = "twostates.mp4@gmail.com"; 
 
 const AIMS = [
   { title: "Clear", text: "Visitors get what you offer in seconds, not minutes.", c: "var(--violet)" },
@@ -19,14 +17,14 @@ const AIMS = [
 const TEAM = [
   {
     name: "Jainy Pasnani",
-    role: "Design & front-end",
-    blurb: "Obsessed with layouts that look sharp and behave on every screen.",
+    role: "Full-stack developer & designer",
+    blurb: "Takes a site from first sketch to working product: the design, the front-end and the back-end.",
     c: "var(--pink)",
   },
   {
     name: "Mehak Arora",
-    role: "Full-stack & logic",
-    blurb: "Makes the clever stuff work: data, forms, calculators, no surprises.",
+    role: "Designer & Testing",
+    blurb: "Makes sure everything works before you see it: tests every page and flow, shapes the design, and helps with Python back-end and front-end work.",
     c: "var(--lime)",
   },
 ];
