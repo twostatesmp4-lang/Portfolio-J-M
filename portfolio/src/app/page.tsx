@@ -1,8 +1,10 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect, useRef, useState } from "react";
+/* ------------------------------------------------------------------ */
+/*  EDIT ME: all the content lives here                                */
+/* ------------------------------------------------------------------ */
 
 
 const EMAIL = "twostates.mp4@gmail.com"; 
@@ -20,12 +22,16 @@ const TEAM = [
     role: "Full-stack developer & designer",
     blurb: "Takes a site from first sketch to working product: the design, the front-end and the back-end.",
     c: "var(--pink)",
+    photo: "/jainy.jpeg", // put the file in /public
+    linkedin: "https://www.linkedin.com/in/jainy-pasnani-49a063314/", // TODO: real link
   },
   {
     name: "Mehak Arora",
     role: "Designer & Testing",
     blurb: "Makes sure everything works before you see it: tests every page and flow, shapes the design, and helps with Python back-end and front-end work.",
     c: "var(--lime)",
+    photo: "/mehak.jpeg", // put the file in /public
+    linkedin: "https://www.linkedin.com/in/mehak-arora-016765390/", // TODO: real link
   },
 ];
 
@@ -43,6 +49,9 @@ const TECH = [
   { name: "Technical SEO", plain: "Helps your site show up on Google" },
   { name: "Vercel", plain: "Puts your site live on the internet" },
   { name: "Git", plain: "Saves every version so nothing is lost" },
+  { name: "Render", plain: "Deploys apps and servers so they stay online" },
+  { name: "Python", plain: "Powers data, automation and smart scripts" },
+  { name: "Bootstrap", plain: "Ready-made building blocks for quick, tidy layouts" },
 ];
 const TILE_COLORS = ["var(--violet)", "var(--pink)", "var(--orange)", "var(--lime)", "var(--sky)"];
 /* Text colour that stays readable on a solid card colour (violet needs the theme's light/dark ink). */
@@ -103,6 +112,25 @@ const PROJECTS = [
     cta: "Try it live",
     bg: "var(--card-b)",
   },
+    {
+    key: "bakery",
+    n: "03",
+    name: "Fleur & Farine",
+    type: "Bakery website (concept)",
+    url: "https://bakery-fleur-farine.vercel.app/",
+    summary:
+      "A warm, mouth-watering site for a neighbourhood bakery: see what came out of the oven this morning, read the story, and find the shop.",
+    points: [
+      "Today's case with prices and allergen labels",
+      "A morning-at-the-bakery timeline that tells the story",
+      "Opening hours, address and one-tap call to order",
+    ],
+    stack: ["HTML", "CSS", "JavaScript"],
+    desktop: "/bakery-desktop.png",
+    mobile: "/bakery-mobile.jpeg",
+    cta: "Visit the bakery",
+    bg: "var(--card-c)",
+  },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -132,10 +160,12 @@ const CSS = `
   --card-b: #F2FFC4;
   --tint: #F3EEE2;
   color-scheme: light;
+  --card-c: #FFE4D2;
 }
 .pf[data-theme="dark"] {
   --bg: #130F26;
   --surface: #1C1736;
+  --card-c: #3B2418;
   --ink: #F4F0FF;
   --muted: #A9A3C8;
   --line: #F4F0FF;
@@ -370,7 +400,7 @@ html[data-pf-theme="dark"],  html[data-pf-theme="dark"] body  { background: #130
 .pf-team { display: grid; grid-template-columns: 1fr; gap: 22px; margin-top: 2.5rem; }
 @media (min-width: 760px) { .pf-team { grid-template-columns: repeat(2, 1fr); } }
 .pf-member {
-  --r: 54px; position: relative; text-align: center; padding: calc(var(--r) + 24px) 1.8rem 1.9rem;
+  --r: 170px; position: relative; text-align: center; padding: calc(var(--r) + 24px) 1.8rem 1.9rem;
   background: var(--c); color: var(--on, #1B1633);
   border: 2px solid var(--line); border-radius: 28px; box-shadow: 5px 5px 0 var(--line); transition: transform .25s ease;
 }
@@ -380,6 +410,32 @@ html[data-pf-theme="dark"],  html[data-pf-theme="dark"] body  { background: #130
 .pf-member h3 { font-size: 1.7rem; font-weight: 900; }
 .pf-role { display: inline-block; margin-top: .55rem; font-weight: 600; font-size: .85rem; border: 2px solid var(--line); border-radius: 999px; padding: .1rem .8rem; background: var(--surface); color: var(--ink); }
 .pf-member p.b { margin-top: .8rem; opacity: .9; }
+/* Team photo (sits inside the scoop, replaces the initials) */
+.pf-notch-in.photo {
+  width: calc(var(--r) * .9); height: calc(var(--r) * .9);
+  top: 0; margin-left: calc(var(--r) * -.45);
+  border-radius: 50%; overflow: hidden; border: 3px solid var(--line); background: var(--surface);
+}
+.pf-member:hover .pf-notch-in.photo { transform: scale(1.06); }
+.pf-initials {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: 'Gabarito', sans-serif; font-weight: 900; font-size: 2.3rem; letter-spacing: -0.02em; color: var(--ink);
+}
+.pf-avatar-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 15%; transition: opacity .3s ease;
+}
+
+/* LinkedIn pill (matches the role pill and button style) */
+.pf-in {
+  display: inline-flex; align-items: center; gap: .55rem; margin-top: 1.3rem;
+  font-weight: 600; font-size: .92rem; padding: .45rem 1rem .45rem .6rem;
+  border: 2px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink);
+  box-shadow: 3px 3px 0 var(--line); transition: transform .18s ease, box-shadow .18s ease;
+}
+.pf-in svg { width: 22px; height: 22px; flex: none; display: block; }
+.pf-in:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--line); }
+.pf-in:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--line); }
 
 /* ---------- Contact ---------- */
 .pf-contact-wrap { padding: 96px 0 40px; }
@@ -575,7 +631,7 @@ export default function Portfolio() {
                       <span>{p.url.replace("https://", "").replace(/\/$/, "")}</span>
                     </div>
                     <div className="pf-view">
-                      {p.key === "fin" ? <FinMock /> : <MindMock />}
+                      {p.key === "fin" ? <FinMock /> : p.key === "bakery" ? <BakeryMock /> : <MindMock />}
                       <Shot src={p.desktop} alt={`${p.name} homepage preview`} />
                     </div>
                   </div>
@@ -652,23 +708,39 @@ export default function Portfolio() {
             <h2 className="pf-h2">Two people. One high bar.</h2>
           </motion.div>
           <div className="pf-team">
-            {TEAM.map((m, i) => (
-              <motion.div
-                key={m.name}
-                {...reveal(i * 0.08)}
-                className="pf-member"
-                style={{ ["--c" as string]: m.c, ["--on" as string]: inkOn(m.c) }}
-              >
-                <span className="pf-notch" aria-hidden />
-                <span className="pf-notch-in txt" aria-hidden>
-                  {m.name.split(" ").map((w) => w[0]).join("")}
-                </span>
-                <h3>{m.name}</h3>
-                <p className="pf-role">{m.role}</p>
-                <p className="b">{m.blurb}</p>
-              </motion.div>
-            ))}
-          </div>
+  {TEAM.map((m, i) => (
+    <motion.div
+      key={m.name}
+      {...reveal(i * 0.08)}
+      className="pf-member"
+      style={{ ["--c" as string]: m.c, ["--on" as string]: inkOn(m.c) }}
+    >
+      <span className="pf-notch" aria-hidden />
+      <span className="pf-notch-in photo">
+        <Avatar src={m.photo} name={m.name} />
+      </span>
+      <h3>{m.name}</h3>
+      <p className="pf-role">{m.role}</p>
+      <p className="b">{m.blurb}</p>
+      {m.linkedin && (
+        <a
+          href={m.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="pf-in"
+          aria-label={`${m.name} on LinkedIn`}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden>
+            <rect width="24" height="24" rx="5" fill="#0A66C2" />
+            <circle cx="7.2" cy="7.4" r="1.7" fill="#fff" />
+            <path d="M5.7 10h3v8.5h-3zM10.5 10h2.9v1.2c.5-.9 1.5-1.4 2.7-1.4 2.4 0 3.2 1.5 3.2 3.8v4.9h-3v-4.4c0-1-.3-1.7-1.3-1.7s-1.5.7-1.5 1.8v4.3h-3z" fill="#fff" />
+          </svg>
+          Connect on LinkedIn
+        </a>
+      )}
+    </motion.div>
+  ))}
+</div>
         </section>
 
         {/* Contact */}
@@ -714,6 +786,30 @@ function Shot({ src, alt }: { src: string; alt: string }) {
       onError={() => setOk(false)}
       style={{ opacity: ok ? 1 : 0 }}
     />
+  );
+}
+/** Team photo: initials show until the image loads (or if it's missing). */
+function Avatar({ src, name }: { src: string; name: string }) {
+  const [ok, setOk] = useState(false);
+  const ref = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    if (ref.current?.complete && ref.current.naturalWidth > 0) setOk(true);
+  }, []);
+  const initials = name.split(" ").map((w) => w[0]).join("");
+  return (
+    <>
+      <span className="pf-initials" aria-hidden>{initials}</span>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        ref={ref}
+        className="pf-avatar-img"
+        src={src}
+        alt={ok ? name : ""}
+        onLoad={() => setOk(true)}
+        onError={() => setOk(false)}
+        style={{ opacity: ok ? 1 : 0 }}
+      />
+    </>
   );
 }
 
@@ -787,16 +883,42 @@ function MindMock() {
     </div>
   );
 }
-
+function BakeryMock() {
+  return (
+    <div className="mk" aria-hidden>
+      <div className="mk-top">
+        <i className="mk-logo" style={{ background: "var(--pink)" }} />
+        <span className="mk-nav"><i /><i /><i /></span>
+      </div>
+      <i className="mk-q" style={{ width: "62%", height: 14 }} />
+      <i className="mk-q" style={{ width: "40%" }} />
+      <div className="mk-cards" style={{ flex: 1, minHeight: 0 }}>
+        {["g2", "g3", "g1"].map((g) => (
+          <div key={g} className="mk-card">
+            <i className={`mk-img ${g}`} />
+            <i className="mk-line" />
+            <i className="mk-price" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 function PhoneMock({ variant }: { variant: string }) {
   return (
     <div className="mk-phone-body" aria-hidden>
-      <i className="mk-phone-block" style={{ height: 8, width: "50%", background: "var(--violet)" }} />
+      <i className="mk-phone-block" style={{ height: 8, width: "50%", background: variant === "bakery" ? "var(--pink)" : "var(--violet)" }} />
       {variant === "fin" ? (
         <>
           <i className="mk-phone-block" style={{ height: 38, background: "linear-gradient(135deg, var(--pink), var(--orange))" }} />
           <i className="mk-phone-block" style={{ height: 38, background: "linear-gradient(135deg, var(--lime), var(--sky))" }} />
           <i className="mk-phone-block" style={{ height: 8, background: "var(--soft)" }} />
+        </>
+      ) : variant === "bakery" ? (
+        <>
+          <i className="mk-phone-block" style={{ height: 44, background: "linear-gradient(135deg, var(--orange), var(--pink))" }} />
+          <i className="mk-phone-block" style={{ height: 8, background: "var(--soft)" }} />
+          <i className="mk-phone-block" style={{ height: 8, width: "70%", background: "var(--soft)" }} />
         </>
       ) : (
         <>
@@ -921,6 +1043,23 @@ function SkillIcon({ name }: { name: string }) {
           </g>
         </svg>
       );
+      case "Render":
+      return (
+        <svg viewBox="0 0 554 554" fill="currentColor">
+          <path d="M0 553V254A186 186 0 0 0 277 125A138 138 0 1 1 414 276H336A60 60 0 0 0 276 336V553Z" />
+        </svg>
+      );
+    case "Bootstrap":
+      return (
+        <svg viewBox="0 0 32 32">
+          <rect x="2" y="2" width="28" height="28" rx="6" fill="#7952B3" />
+          <path
+            fillRule="evenodd"
+            fill="#fff"
+            d="M12 9h6.2c2.4 0 3.8 1.2 3.8 3.2 0 1.4-.8 2.4-2 2.8 1.6.3 2.7 1.5 2.7 3.3 0 2.4-1.8 3.7-4.5 3.7H12zM14.6 11.2v3.1h3c1.1 0 1.8-.6 1.8-1.6s-.7-1.5-1.8-1.5zM14.6 16.4v3.4h3.3c1.2 0 2-.6 2-1.7s-.8-1.7-2-1.7z"
+          />
+        </svg>
+      );
     case "Python":
       return (
         <svg viewBox="0 0 32 32">
@@ -981,6 +1120,16 @@ function ProjectIcon({ name }: { name: string }) {
         <path d="M20 12h6v16h-6" {...line} />
         <path d="M10 9h2M14 9h2M10 14h2M14 14h2M10 19h2M14 19h2M23 17h.5M23 21.5h.5" {...line} />
         <path d="M2.5 28h27" {...line} />
+      </svg>
+    );
+  }
+    if (name === "bakery") {
+    return (
+      <svg viewBox="0 0 32 32" fill="none">
+        <path d="M7 15h18l-2.5 13h-13z" fill="var(--orange)" {...line} />
+        <path d="M6 15c-1.5-5 2-8 5.5-7.5C12.5 4.5 19.5 4.5 20.5 7.5C24 7 27.5 10 26 15z" fill="var(--pink)" {...line} />
+        <circle cx="16" cy="4" r="1.8" fill="var(--lime)" {...line} />
+        <path d="M12 19l1 6M16 19v6M20 19l-1 6" {...line} />
       </svg>
     );
   }
