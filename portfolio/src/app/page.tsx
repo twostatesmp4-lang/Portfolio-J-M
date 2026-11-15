@@ -66,6 +66,16 @@ const TICKER = [
   "Built by two humans",
 ];
 
+/* Quick answers: the questions customers usually have, answered up front. Edit freely. */
+const FAQS = [
+  { q: "How much will it cost?", a: "It depends on what you need. Tell us your idea and we'll send a clear plan before any work starts.", c: "var(--lime)" },
+  { q: "Do you handle everything?", a: "Yes: design, building, testing and putting it live. Just the two of us, start to finish.", c: "var(--pink)" },
+  { q: "Will it work on phones?", a: "Yes. Every site is built mobile-first and checked on phone, tablet and desktop before you see it.", c: "var(--sky)" },
+  { q: "Will people find it on Google?", a: "We build with search in mind: clean structure and fast pages, like the local-search work on FinFastSpace.", c: "var(--orange)" },
+  { q: "I'm not technical. Is that okay?", a: "Completely. We explain everything in plain English, and you talk straight to us, with no middlemen.", c: "var(--violet)" },
+  { q: "Is it a ready-made template?", a: "No. Every site is designed around your business, so it doesn't look like everyone else's.", c: "var(--lime)" },
+];
+
 /*
  * PROJECT IMAGES (optional)
  * Drop real screenshots into /public/projects/ with these names and they
@@ -281,6 +291,20 @@ html[data-pf-theme="dark"],  html[data-pf-theme="dark"] body  { background: #130
 .pf-notch-in svg { width: 100%; height: 100%; display: block; overflow: visible; }
 .pf-notch-in.txt { width: calc(var(--r) * 1.1); margin-left: calc(var(--r) * -.55); font-family: 'Gabarito', sans-serif; font-weight: 900; font-size: 1.5rem; letter-spacing: -0.02em; line-height: 1; }
 .pf-aim:hover .pf-notch-in, .pf-project:hover .pf-notch-in, .pf-member:hover .pf-notch-in { transform: scale(1.22) rotate(-8deg); }
+
+/* ---------- Quick answers (all visible at once, no accordion) ---------- */
+.pf-faqs { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 2.5rem; }
+@media (min-width: 640px) { .pf-faqs { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 980px) { .pf-faqs { grid-template-columns: repeat(3, 1fr); } }
+.pf-faq {
+  --r: 34px; position: relative; text-align: center; padding: calc(var(--r) + 20px) 1.3rem 1.5rem;
+  background: var(--c); color: var(--on, #1B1633);
+  border: 2px solid var(--line); border-radius: 22px; box-shadow: 4px 4px 0 var(--line); transition: transform .2s ease;
+}
+.pf-faq:hover { transform: translateY(-4px) rotate(-1deg); }
+.pf-faq:hover .pf-notch-in { transform: scale(1.22) rotate(-8deg); }
+.pf-faq h3 { font-size: 1.25rem; font-weight: 900; line-height: 1.12; }
+.pf-faq p { margin-top: .55rem; font-size: .96rem; line-height: 1.5; opacity: .92; }
 
 /* ---------- Why us ---------- */
 .pf-aims { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 2.5rem; }
@@ -570,6 +594,29 @@ export default function Portfolio() {
       </div>
 
       <div className="pf-wrap">
+        {/* Quick answers */}
+        <section id="faq" className="pf-sec">
+          <motion.div {...reveal()}>
+            <span className="pf-kicker">Quick answers</span>
+            <h2 className="pf-h2">Questions you might have.</h2>
+          </motion.div>
+          <div className="pf-faqs">
+            {FAQS.map((f, i) => (
+              <motion.div
+                key={f.q}
+                {...reveal(i * 0.05)}
+                className="pf-faq"
+                style={{ ["--c" as string]: f.c, ["--on" as string]: inkOn(f.c) }}
+              >
+                <span className="pf-notch" aria-hidden />
+                <span className="pf-notch-in txt" aria-hidden>?</span>
+                <h3>{f.q}</h3>
+                <p>{f.a}</p>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
         {/* Why us */}
         <section className="pf-sec">
           <motion.div {...reveal()}>
